@@ -1,5 +1,5 @@
 import math
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 
 from .sorted_dict import SortedDict
 from .generic_repr import GenericRepr
@@ -45,7 +45,7 @@ class CollectionFormatter(TypeFormatter):
         # https://github.com/syrusakbary/snapshottest/issues/115
         # Normally we shouldn't need to turn this into a list, but some iterable
         # constructors need a list not an iterator (e.g. unittest.mock.call).
-        return value.__class__([formatter.normalize(item) for item in iterator])
+        return self.types([formatter.normalize(item) for item in iterator])
 
 
 class DefaultDictFormatter(TypeFormatter):
@@ -162,6 +162,7 @@ def default_formatters():
     return [
         TypeFormatter(type(None), format_none),
         DefaultDictFormatter(defaultdict, format_dict),
+        CollectionFormatter(OrderedDict, format_dict),
         CollectionFormatter(dict, format_dict),
         CollectionFormatter(tuple, format_tuple),
         CollectionFormatter(list, format_list),
